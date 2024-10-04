@@ -17,7 +17,7 @@ function DealStart({
     <div className="relative flex items-center justify-center gap-1">
       {cpuHand && (
         <>
-          <div className="flex items-center justify-center rounded-full absolute -right-32 size-20 bg-zinc-950">
+          <div className="hidden sm:flex items-center justify-center rounded-full absolute -right-32 size-20 bg-zinc-950">
             <AnimatedNumber
               className="inline-flex items-center font-mono text-xl font-light text-white"
               springOptions={{
@@ -90,7 +90,7 @@ function DealStart({
         <>
           <div
             className={cn(
-              "flex items-center justify-center rounded-full absolute -left-32 size-20 bg-zinc-100",
+              "hidden sm:flex items-center justify-center rounded-full absolute -left-32 size-20 bg-zinc-100",
               playerTotal > 21 && "bg-red-600",
               playerTotal === 21 && "bg-green-600 animate-bounce"
             )}

@@ -17,9 +17,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/blackjack logo.png" />
       </head>
-      <body
-        className={`${figtree.className} antialiased bg-[#055814] overflow-hidden`}
-      >
+      <body className={`${figtree.className} antialiased bg-[#055814]`}>
         {children}
       </body>
     </html>

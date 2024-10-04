@@ -225,7 +225,7 @@ function GameBoard() {
     <MaxWidthWrapper className="relative py-4">
       {gameResult && isOpen && <ResultModal gameResult={gameResult} />}
       {startDeal && (
-        <div className="flex gap-2 absolute left-10 w-max">
+        <div className="flex items-center justify-center md:items-start gap-2 md:absolute md:left-10 md:w-max">
           <Button>
             Bank:
             <span className="font-bold ml-1 flex items-center justify-center">
@@ -254,7 +254,7 @@ function GameBoard() {
           </Button>
         </div>
       )}
-      <div className="absolute right-10 w-max">
+      <div className="hidden sm:block absolute right-10 w-max">
         <Badge>
           remaining cards:
           <AnimatedNumber
@@ -267,8 +267,8 @@ function GameBoard() {
           />
         </Badge>
       </div>
-      <div className="flex flex-col items-center justify-center gap-8 h-dvh">
-        <div className="h-[50%] flex flex-col items-center justify-center gap-6">
+      <div className="flex flex-col items-center justify-center gap-8 h-screen">
+        <div className="flex flex-col items-center justify-center pt-4 md:pt-0 gap-2 md:gap-6">
           {startDeal && (
             <>
               <DealStart playerTotal={playerTotal} cpuHand={cpuHand} />
@@ -308,9 +308,9 @@ function GameBoard() {
           )}
         </div>
 
-        <div
+        <motion.div
           className={cn(
-            "bg-zinc-950 w-full pt-8 h-[60%] flex flex-col items-center gap-6 rounded-xl",
+            "bg-zinc-950 p-4  md:py-8 md:px-6 flex flex-col items-center gap-6 rounded-xl ",
 
             startDeal && "relative"
           )}
@@ -361,17 +361,13 @@ function GameBoard() {
             </>
           )}
 
-          <div
-            className={cn(
-              "flex items-center justify-center gap-2",
-              startDeal && "absolute bottom-12 p-2"
-            )}
-          >
+          <div className="flex items-center justify-center gap-2">
             {startDeal && (
               <>
                 <Button
                   onClick={() => playerHit()}
                   size={"lg"}
+                  variant={playerTotal === 21 ? "destructive" : "default"}
                   className="w-max uppercase gap-2"
                 >
                   <CirclePlusIcon />
@@ -418,7 +414,7 @@ function GameBoard() {
               </>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
     </MaxWidthWrapper>
   );

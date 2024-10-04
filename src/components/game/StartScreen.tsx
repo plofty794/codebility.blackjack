@@ -17,7 +17,7 @@ function StartScreen({
   };
 
   return (
-    <div className="relative min-h-dvh flex justify-center items-center">
+    <div className="relative min-h-screen flex justify-center items-center overflow-hidden">
       <motion.div
         initial={{
           y: "20%",
