@@ -238,7 +238,7 @@ function GameBoard() {
           />
         </Badge>
       </div>
-      <div className="flex flex-col items-center justify-center gap-4 md:gap-8 h-dvh">
+      <div className="flex flex-col items-center justify-center gap-8 h-dvh">
         {startDeal && (
           <div className="flex items-center justify-center gap-2absolute left-10 w-max">
             <Button>
@@ -269,7 +269,7 @@ function GameBoard() {
             </Button>
           </div>
         )}
-        <div className="flex flex-col items-center justify-center mt-6 md:mt-0 gap-2 md:gap-6">
+        <div className="flex flex-col items-center justify-center gap-2 md:gap-6">
           {startDeal && (
             <>
               <DealStart playerTotal={playerTotal} cpuHand={cpuHand} />
@@ -311,7 +311,7 @@ function GameBoard() {
 
         <motion.div
           className={cn(
-            "bg-zinc-950 p-4 md:py-8 md:px-6 flex flex-col items-center gap-2 md:gap-6 rounded-xl ",
+            "bg-zinc-950 p-4 md:py-8 md:px-6 flex flex-col items-center gap-4 md:gap-6 rounded-xl ",
 
             startDeal && "relative"
           )}
