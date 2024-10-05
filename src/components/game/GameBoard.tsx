@@ -224,37 +224,8 @@ function GameBoard() {
   return (
     <MaxWidthWrapper className="relative py-4">
       {gameResult && isOpen && <ResultModal gameResult={gameResult} />}
-      {startDeal && (
-        <div className="flex items-center justify-center md:items-start gap-2 md:absolute md:left-10 md:w-max">
-          <Button>
-            Bank:
-            <span className="font-bold ml-1 flex items-center justify-center">
-              <DollarSignIcon className="size-4" />
-              <AnimatedNumber
-                springOptions={{
-                  bounce: 0,
-                  duration: 500,
-                }}
-                value={yourBank}
-              />
-            </span>
-          </Button>
-          <Button variant={"secondary"}>
-            Current bet:
-            <span className="font-bold ml-1 flex items-center justify-center">
-              <DollarSignIcon className="size-4" />
-              <AnimatedNumber
-                springOptions={{
-                  bounce: 0,
-                  duration: 500,
-                }}
-                value={yourBet}
-              />
-            </span>
-          </Button>
-        </div>
-      )}
-      <div className="hidden sm:block absolute right-10 w-max">
+
+      <div className="absolute right-10 w-max">
         <Badge>
           remaining cards:
           <AnimatedNumber
@@ -267,8 +238,38 @@ function GameBoard() {
           />
         </Badge>
       </div>
-      <div className="flex flex-col items-center justify-center gap-4 md:gap-8 h-screen">
-        <div className="flex flex-col items-center justify-center pt-4 md:pt-0 gap-2 md:gap-6">
+      <div className="flex flex-col items-center justify-center gap-4 md:gap-8 h-dvh">
+        {startDeal && (
+          <div className="flex items-center justify-center md:items-start gap-2 md:absolute md:left-10 md:w-max">
+            <Button>
+              Bank:
+              <span className="font-bold ml-1 flex items-center justify-center">
+                <DollarSignIcon className="size-4" />
+                <AnimatedNumber
+                  springOptions={{
+                    bounce: 0,
+                    duration: 500,
+                  }}
+                  value={yourBank}
+                />
+              </span>
+            </Button>
+            <Button variant={"secondary"}>
+              Current bet:
+              <span className="font-bold ml-1 flex items-center justify-center">
+                <DollarSignIcon className="size-4" />
+                <AnimatedNumber
+                  springOptions={{
+                    bounce: 0,
+                    duration: 500,
+                  }}
+                  value={yourBet}
+                />
+              </span>
+            </Button>
+          </div>
+        )}
+        <div className="flex flex-col items-center justify-center mt-6 md:mt-0 gap-2 md:gap-6">
           {startDeal && (
             <>
               <DealStart playerTotal={playerTotal} cpuHand={cpuHand} />
@@ -310,7 +311,7 @@ function GameBoard() {
 
         <motion.div
           className={cn(
-            "bg-zinc-950 p-4 md:py-8 md:px-6 flex flex-col items-center gap-6 rounded-xl ",
+            "bg-zinc-950 p-4 md:py-8 md:px-6 flex flex-col items-center gap-2 md:gap-6 rounded-xl ",
 
             startDeal && "relative"
           )}
@@ -380,7 +381,11 @@ function GameBoard() {
                     calculateHandValue(cpuHand, playerHand);
                   }}
                   size={"lg"}
-                  className="w-max uppercase gap-2"
+                  className={cn(
+                    "w-max uppercase gap-2",
+                    playerTotal === 21 &&
+                      "animate-bounce bg-green-700 hover:bg-green-600"
+                  )}
                 >
                   <Hand />
                   Stand
