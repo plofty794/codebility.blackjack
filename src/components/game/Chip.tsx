@@ -8,8 +8,8 @@ function Chip({ fill, value }: { fill: string; value: number }) {
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
         xmlSpace="preserve"
-        width="35mm"
-        height="35mm"
+        width="25mm"
+        height="25mm"
         version="1.0"
         shapeRendering={"geometricPrecision"}
         textRendering={"geometricPrecision"}

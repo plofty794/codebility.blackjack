@@ -60,7 +60,7 @@ function DealStart({
             transition={{
               delay: 0.4,
             }}
-            className="flex items-center justify-center gap-1 w-32 h-44"
+            className="-ml-20 flex items-center justify-center gap-1 w-32 h-44"
           >
             <Card imageUrl={cpuHand[1].imageUrl} />
           </motion.div>
@@ -79,7 +79,7 @@ function DealStart({
                   delay: idx > 0 ? idx / 10 : idx + 0.1,
                 }}
                 key={card.imageUrl}
-                className="flex items-center justify-center gap-1 w-32 h-44"
+                className="-ml-20 flex items-center justify-center gap-1 w-32 h-44"
               >
                 <Card imageUrl={card.imageUrl} />
               </motion.div>
@@ -90,7 +90,7 @@ function DealStart({
         <>
           <div
             className={cn(
-              "hidden sm:flex items-center justify-center rounded-full absolute -left-32 size-20 bg-zinc-100",
+              "hidden sm:flex items-center justify-center rounded-full absolute -left-44 size-20 bg-zinc-100",
               playerTotal > 21 && "bg-red-600",
               playerTotal === 21 && "bg-green-600 animate-bounce"
             )}
@@ -108,25 +108,46 @@ function DealStart({
               value={playerTotal}
             />
           </div>
-          {playerHand.map((card, idx) => (
-            <motion.div
-              initial={{
-                opacity: 0,
-                translateX: "-50%",
-              }}
-              animate={{
-                opacity: 1,
-                translateX: "0%",
-              }}
-              transition={{
-                delay: idx > 0 ? idx / 10 : idx + 0.1,
-              }}
-              key={card.imageUrl}
-              className="flex items-center justify-center gap-1 w-32 h-44"
-            >
-              <Card imageUrl={card.imageUrl} />
-            </motion.div>
-          ))}
+
+          {playerHand.map((card, idx) =>
+            idx === 0 ? (
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  translateX: "-50%",
+                }}
+                animate={{
+                  opacity: 1,
+                  translateX: "0%",
+                }}
+                transition={{
+                  delay: idx > 0 ? idx / 10 : idx + 0.1,
+                }}
+                key={card.imageUrl}
+                className="flex items-center justify-center gap-1 w-32 h-44"
+              >
+                <Card imageUrl={card.imageUrl} />
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  translateX: "-50%",
+                }}
+                animate={{
+                  opacity: 1,
+                  translateX: "0%",
+                }}
+                transition={{
+                  delay: idx > 0 ? idx / 10 : idx + 0.1,
+                }}
+                key={card.imageUrl}
+                className="-ml-24 flex items-center justify-center gap-1 w-32 h-44"
+              >
+                <Card imageUrl={card.imageUrl} />
+              </motion.div>
+            )
+          )}
         </>
       )}
     </div>

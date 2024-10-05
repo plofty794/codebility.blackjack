@@ -222,10 +222,10 @@ function GameBoard() {
   }
 
   return (
-    <MaxWidthWrapper className="relative py-4">
+    <MaxWidthWrapper className="relative">
       {gameResult && isOpen && <ResultModal gameResult={gameResult} />}
 
-      <div className="absolute right-10 w-max">
+      <div className="hidden md:block absolute top-10 right-10 w-max">
         <Badge>
           remaining cards:
           <AnimatedNumber
@@ -240,7 +240,7 @@ function GameBoard() {
       </div>
       <div className="flex flex-col items-center justify-center gap-4 md:gap-8 h-dvh">
         {startDeal && (
-          <div className="flex items-center justify-center md:items-start gap-2 md:absolute md:left-10 md:w-max">
+          <div className="flex items-center justify-center gap-2absolute left-10 w-max">
             <Button>
               Bank:
               <span className="font-bold ml-1 flex items-center justify-center">
@@ -278,7 +278,7 @@ function GameBoard() {
 
           {!startDeal && (
             <>
-              <div className="flex items-center justify-center">
+              <div className="hidden md:flex items-center justify-center">
                 <p className="uppercase text-xl font-medium text-white mr-2">
                   bet
                 </p>
