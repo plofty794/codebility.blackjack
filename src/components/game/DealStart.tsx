@@ -14,7 +14,7 @@ function DealStart({
   playerTotal: number;
 }) {
   return (
-    <div className="relative flex items-center justify-center gap-1">
+    <div className="relative flex items-center justify-center gap-1 flex-wrap">
       {cpuHand && (
         <>
           <div className="hidden sm:flex items-center justify-center rounded-full absolute -right-32 size-20 bg-zinc-950">

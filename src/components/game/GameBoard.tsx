@@ -267,7 +267,7 @@ function GameBoard() {
           />
         </Badge>
       </div>
-      <div className="flex flex-col items-center justify-center gap-8 h-screen">
+      <div className="flex flex-col items-center justify-center gap-4 md:gap-8 h-screen">
         <div className="flex flex-col items-center justify-center pt-4 md:pt-0 gap-2 md:gap-6">
           {startDeal && (
             <>
@@ -310,7 +310,7 @@ function GameBoard() {
 
         <motion.div
           className={cn(
-            "bg-zinc-950 p-4  md:py-8 md:px-6 flex flex-col items-center gap-6 rounded-xl ",
+            "bg-zinc-950 p-4 md:py-8 md:px-6 flex flex-col items-center gap-6 rounded-xl ",
 
             startDeal && "relative"
           )}
