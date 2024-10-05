@@ -240,8 +240,8 @@ function GameBoard() {
       </div>
       <div className="flex flex-col items-center justify-center gap-8 h-screen">
         {startDeal && (
-          <div className="flex items-center justify-center gap-2absolute left-10 w-max">
-            <Button>
+          <div className="md:w-2/5 flex flex-col md:flex-row items-center justify-center gap-2 left-10">
+            <Button className="w-full">
               Bank:
               <span className="font-bold ml-1 flex items-center justify-center">
                 <DollarSignIcon className="size-4" />
@@ -254,7 +254,7 @@ function GameBoard() {
                 />
               </span>
             </Button>
-            <Button variant={"secondary"}>
+            <Button className="w-full" variant={"secondary"}>
               Current bet:
               <span className="font-bold ml-1 flex items-center justify-center">
                 <DollarSignIcon className="size-4" />
