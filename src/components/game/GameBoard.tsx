@@ -238,7 +238,7 @@ function GameBoard() {
           />
         </Badge>
       </div>
-      <div className="flex flex-col items-center justify-center gap-8 h-dvh">
+      <div className="flex flex-col items-center justify-center gap-8 h-screen">
         {startDeal && (
           <div className="flex items-center justify-center gap-2absolute left-10 w-max">
             <Button>
