@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Dispatch, SetStateAction } from "react";
+import { shuffleDeck } from "./GameBoard";
+import { CARDS } from "@/data/deck";
 
 export interface GameResult {
   result: "playerWin" | "cpuWin" | "bust" | "push" | null;
@@ -35,9 +37,20 @@ export interface GameResult {
       }[]
     >
   ) => void;
-
+  setPlayerTotal?: Dispatch<SetStateAction<number>>;
   setIsOpen: Dispatch<SetStateAction<boolean | undefined>>;
   setGameResult: Dispatch<SetStateAction<GameResult | null | undefined>>;
+  setDeck?: Dispatch<
+    SetStateAction<
+      {
+        value: string;
+        cardValue: number;
+        suit: string;
+        imageUrl: string;
+      }[]
+    >
+  >;
+  setYourBank?: Dispatch<SetStateAction<number>>;
 }
 
 function ResultModal({ gameResult }: { gameResult: GameResult }) {
@@ -85,6 +98,17 @@ function ResultModal({ gameResult }: { gameResult: GameResult }) {
               size={"lg"}
               className="w-full"
               onClick={() => {
+                if (
+                  gameResult.result === "bust" &&
+                  gameResult.setPlayerTotal != null &&
+                  gameResult.setDeck != null &&
+                  gameResult.setYourBank != null
+                ) {
+                  gameResult.setPlayerTotal(0);
+                  gameResult.setDeck(shuffleDeck(CARDS));
+                  gameResult.setDealStart(false);
+                  gameResult.setYourBank(2000);
+                }
                 if (gameResult.result === "push") {
                   gameResult.setDealStart(false);
                   gameResult.setIsOpen(false);
