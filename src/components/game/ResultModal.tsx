@@ -8,39 +8,23 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Dispatch, SetStateAction } from "react";
-import { shuffleDeck } from "./GameBoard";
-import { CARDS } from "@/data/deck";
 
 export interface GameResult {
-  result: "playerWin" | "cpuWin" | "bust" | "push" | null;
+  result:
+    | "playerWin"
+    | "cpuWin"
+    | "playerBust"
+    | "cpuBust"
+    | "bust"
+    | "push"
+    | null;
   cpuTotal: number | null;
   playerTotal: number | null;
-  setDealStart: Dispatch<SetStateAction<boolean>>;
   setYourBet: Dispatch<SetStateAction<number>>;
-  setPlayerHand: (
-    value: SetStateAction<
-      {
-        value: string;
-        cardValue: number;
-        suit: string;
-        imageUrl: string;
-      }[]
-    >
-  ) => void;
-  setCPUHand: (
-    value: SetStateAction<
-      {
-        value: string;
-        cardValue: number;
-        suit: string;
-        imageUrl: string;
-      }[]
-    >
-  ) => void;
-  setPlayerTotal?: Dispatch<SetStateAction<number>>;
-  setIsOpen: Dispatch<SetStateAction<boolean | undefined>>;
-  setGameResult: Dispatch<SetStateAction<GameResult | null | undefined>>;
-  setDeck?: Dispatch<
+  setYourBank?: Dispatch<SetStateAction<number>>;
+  setGameResult: Dispatch<SetStateAction<GameResult | null>>;
+  setDealStart: Dispatch<SetStateAction<boolean>>;
+  setCPUHand: Dispatch<
     SetStateAction<
       {
         value: string;
@@ -50,20 +34,86 @@ export interface GameResult {
       }[]
     >
   >;
-  setYourBank?: Dispatch<SetStateAction<number>>;
+  setPlayerHand: Dispatch<
+    SetStateAction<
+      {
+        value: string;
+        cardValue: number;
+        suit: string;
+        imageUrl: string;
+      }[]
+    >
+  >;
 }
 
 function ResultModal({ gameResult }: { gameResult: GameResult }) {
-  function result(gameResult: GameResult) {
-    switch (gameResult.result) {
+  function result(result: GameResult["result"]) {
+    switch (result) {
       case "playerWin":
         return "You won";
       case "cpuWin":
-        return "CPU won";
+        return "Dealer won";
       case "bust":
         return "Bust";
+      case "playerBust":
+        return "Bust";
+      case "cpuBust":
+        return "Dealer bust";
       case "push":
         return "Push";
+      default:
+        break;
+    }
+  }
+
+  function handleResults(result: GameResult["result"]) {
+    switch (result) {
+      case "playerWin":
+        gameResult.setGameResult(null);
+        gameResult.setYourBet(0);
+        gameResult.setDealStart(false);
+        return;
+      case "cpuWin":
+        if (gameResult.setYourBank) {
+          gameResult.setYourBank(2000);
+        }
+        gameResult.setYourBet(0);
+        gameResult.setGameResult(null);
+        gameResult.setDealStart(false);
+        return;
+      case "bust":
+        if (gameResult.setYourBank) {
+          gameResult.setYourBank(2000);
+        }
+        gameResult.setGameResult(null);
+        gameResult.setYourBet(0);
+        gameResult.setDealStart(false);
+        return;
+      case "playerBust":
+        if (gameResult.setYourBank) {
+          gameResult.setYourBank(2000);
+        }
+        gameResult.setPlayerHand([]);
+        gameResult.setCPUHand([]);
+        gameResult.setGameResult(null);
+        gameResult.setDealStart(false);
+        gameResult.setYourBet(0);
+        return;
+      case "cpuBust":
+        gameResult.setPlayerHand([]);
+        gameResult.setCPUHand([]);
+        gameResult.setGameResult(null);
+        gameResult.setDealStart(false);
+        gameResult.setYourBet(0);
+        return;
+      case "push":
+        if (gameResult.setYourBank) {
+          gameResult.setYourBank(0);
+        }
+        gameResult.setGameResult(null);
+        gameResult.setYourBet((prev) => prev);
+        gameResult.setDealStart(false);
+        return;
       default:
         break;
     }
@@ -74,7 +124,7 @@ function ResultModal({ gameResult }: { gameResult: GameResult }) {
       <DialogContent>
         <DialogHeader className="rounded-md bg-zinc-800 p-8 w-max mx-auto">
           <DialogTitle className="text-white text-center uppercase font-bold">
-            {result(gameResult)}!
+            {result(gameResult.result)}!
           </DialogTitle>
         </DialogHeader>
         <div className="mt-6 flex items-center justify-center gap-8">
@@ -93,35 +143,13 @@ function ResultModal({ gameResult }: { gameResult: GameResult }) {
           </div>
         </div>
         <DialogFooter className="mt-6">
-          <DialogClose className="w-full">
+          <DialogClose className="w-full" asChild>
             <Button
               size={"lg"}
-              className="w-full"
               onClick={() => {
-                if (
-                  gameResult.result === "bust" &&
-                  gameResult.setPlayerTotal != null &&
-                  gameResult.setDeck != null &&
-                  gameResult.setYourBank != null
-                ) {
-                  gameResult.setPlayerTotal(0);
-                  gameResult.setDeck(shuffleDeck(CARDS));
-                  gameResult.setDealStart(false);
-                  gameResult.setYourBank(2000);
-                }
-                if (gameResult.result === "push") {
-                  gameResult.setDealStart(false);
-                  gameResult.setIsOpen(false);
-                  gameResult.setGameResult(null);
-                } else {
-                  gameResult.setDealStart(false);
-                  gameResult.setYourBet(0);
-                  gameResult.setPlayerHand([]);
-                  gameResult.setCPUHand([]);
-                  gameResult.setIsOpen(false);
-                  gameResult.setGameResult(null);
-                }
+                handleResults(gameResult.result);
               }}
+              className="w-full"
             >
               {gameResult.result !== "playerWin" ? "Try again" : "Continue"}
             </Button>

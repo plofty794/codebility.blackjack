@@ -1,7 +1,7 @@
 import MaxWidthWrapper from "../MaxWidthWrapper";
 import { Badge } from "@/components/ui/badge";
 import { CARDS } from "../../data/deck";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "../ui/button";
 import Chip from "./Chip";
 import {
@@ -55,42 +55,51 @@ export function shuffleDeck(deck: typeof CARDS) {
 }
 
 function GameBoard() {
-  const [playerTotal, setPlayerTotal] = useState<number>(0);
-  const [isOpen, setIsOpen] = useState<boolean | undefined>(true);
-  const [gameResult, setGameResult] = useState<GameResult | null>();
+  const [yourBank, setYourBank] = useState<number>(2000);
+  const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [deck, setDeck] = useState<typeof CARDS>(shuffleDeck(CARDS));
   const [playerHand, setPlayerHand] = useState<typeof CARDS>([]);
   const [cpuHand, setCPUHand] = useState<typeof CARDS>([]);
   const [startDeal, setDealStart] = useState<boolean>(false);
-  const [yourBank, setYourBank] = useState<number>(2000);
   const [yourBet, setYourBet] = useState<number>(0);
 
+  const playerTotal = useMemo(() => {
+    if (!playerHand.length) return 0;
+    return playerHand.reduce((acc, val) => acc + val.cardValue, 0);
+  }, [playerHand]);
+
   useEffect(() => {
-    if (playerTotal > 21) {
+    if (playerTotal > 21 && yourBank === 0) {
+      setDeck(shuffleDeck(CARDS));
       setGameResult({
-        result: "bust",
         cpuTotal: cpuHand.reduce((acc, val) => acc + val.cardValue, 0),
         playerTotal,
+        result: "playerBust",
+        setGameResult,
         setDealStart,
-        setYourBet,
         setCPUHand,
         setPlayerHand,
-        setGameResult,
-        setIsOpen,
-        setPlayerTotal,
-        setDeck,
+        setYourBet,
         setYourBank,
       });
-      setIsOpen(true);
+      return;
     }
-    if (gameResult?.result === "cpuWin" && yourBank === 0) {
+    if (playerTotal > 21 && yourBank > 1) {
       setDeck(shuffleDeck(CARDS));
-      setDealStart(false);
-      setYourBank(2000);
+      setYourBank(Math.abs(yourBet + yourBank - yourBet));
+      setGameResult({
+        cpuTotal: cpuHand.reduce((acc, val) => acc + val.cardValue, 0),
+        playerTotal,
+        result: "playerBust",
+        setGameResult,
+        setDealStart,
+        setCPUHand,
+        setPlayerHand,
+        setYourBet,
+      });
+      return;
     }
-
-    setPlayerTotal(playerHand.reduce((acc, val) => acc + val.cardValue, 0));
-  }, [cpuHand, gameResult?.result, playerHand, playerTotal, yourBank]);
+  }, [cpuHand, playerTotal, setYourBank, yourBank, yourBet]);
 
   function drawCard() {
     const newDeck = [...deck];
@@ -99,7 +108,7 @@ function GameBoard() {
     setDeck(newDeck);
   }
 
-  function calculateHandValue(cpu: typeof CARDS) {
+  function playerStand(cpu: typeof CARDS) {
     let playerTotal = 0;
     let cpuTotal = 0;
     let playerAceCount = 0;
@@ -126,117 +135,159 @@ function GameBoard() {
       cpuTotal -= 10;
       cpuAceCount--;
     }
-    setPlayerTotal(playerTotal);
     closestTo21(cpuTotal, playerTotal);
   }
 
   function closestTo21(cpu: number, player: number): void | null {
-    if (cpu === player) {
-      return setGameResult({
-        result: "push",
+    if (cpu > 21 && player > 21) {
+      setDeck(shuffleDeck(CARDS));
+      setGameResult({
         cpuTotal: cpu,
         playerTotal: player,
-        setDealStart,
-        setYourBet,
-        setCPUHand,
-        setPlayerHand,
-        setGameResult,
-        setIsOpen,
-      });
-    }
-
-    if (cpu > 21 && player > 21) {
-      setGameResult({
         result: "bust",
-        cpuTotal: cpuHand.reduce((acc, val) => acc + val.cardValue, 0),
-        playerTotal,
+        setGameResult,
         setDealStart,
-        setYourBet,
         setCPUHand,
         setPlayerHand,
-        setGameResult,
-        setIsOpen,
-        setPlayerTotal,
-        setDeck,
+        setYourBet,
         setYourBank,
       });
+      return;
     }
-
-    if (cpu > 21) {
-      setYourBank((prev) => prev + yourBet * 2);
-      return setGameResult({
-        result: "playerWin",
-        cpuTotal: cpuHand.reduce((acc, val) => acc + val.cardValue, 0),
-        playerTotal,
+    if (cpu === player) {
+      setGameResult({
+        cpuTotal: cpu,
+        playerTotal: player,
+        result: "push",
+        setGameResult,
         setDealStart,
-        setYourBet,
         setCPUHand,
         setPlayerHand,
-        setGameResult,
-        setIsOpen,
-        setPlayerTotal,
-        setDeck,
+        setYourBet,
         setYourBank,
       });
+      return;
+    }
+    if (cpu > 21) {
+      setYourBank((prev) => {
+        if (prev === 0) {
+          return yourBet * 2;
+        } else {
+          return prev + yourBet * 2;
+        }
+      });
+      setGameResult({
+        cpuTotal: cpu,
+        playerTotal: player,
+        result: "cpuBust",
+        setGameResult,
+        setDealStart,
+        setCPUHand,
+        setPlayerHand,
+        setYourBet,
+      });
+      return;
     }
     if (player > 21) {
-      return setGameResult({
-        result: "bust",
-        cpuTotal: cpuHand.reduce((acc, val) => acc + val.cardValue, 0),
-        playerTotal,
+      setDeck(shuffleDeck(CARDS));
+      setGameResult({
+        cpuTotal: cpu,
+        playerTotal: player,
+        result: "playerBust",
+        setGameResult,
         setDealStart,
-        setYourBet,
         setCPUHand,
         setPlayerHand,
-        setGameResult,
-        setIsOpen,
-        setPlayerTotal,
-        setDeck,
+        setYourBet,
         setYourBank,
       });
+      return;
     }
+
+    if (player === 21) {
+      setYourBank((prev) => {
+        if (prev === 0) {
+          return yourBet * 2;
+        } else {
+          return prev + yourBet * 2;
+        }
+      });
+      setGameResult({
+        cpuTotal: cpu,
+        playerTotal: player,
+        result: "playerWin",
+        setGameResult,
+        setDealStart,
+        setCPUHand,
+        setPlayerHand,
+        setYourBet,
+      });
+      return;
+    }
+
+    if (cpu === 21) {
+      setDeck(shuffleDeck(CARDS));
+      setGameResult({
+        cpuTotal: cpu,
+        playerTotal: player,
+        result: "cpuWin",
+        setGameResult,
+        setDealStart,
+        setCPUHand,
+        setPlayerHand,
+        setYourBet,
+        setYourBank: yourBank === 0 ? setYourBank : undefined,
+      });
+      return;
+    }
+
     const cpuDiff = 21 - cpu;
     const playerDiff = 21 - player;
 
     if (cpuDiff < playerDiff) {
-      setYourBank((prev) => prev);
-      return setGameResult({
+      setDeck(shuffleDeck(CARDS));
+      setYourBank(Math.abs(yourBet + yourBank - yourBet));
+      setGameResult({
+        cpuTotal: cpu,
+        playerTotal: player,
         result: "cpuWin",
-        cpuTotal: cpu,
-        playerTotal: player,
+        setGameResult,
         setDealStart,
-        setYourBet,
         setCPUHand,
         setPlayerHand,
-        setGameResult,
-        setIsOpen,
+        setYourBet,
+        setYourBank: yourBank === 0 ? setYourBank : undefined,
       });
+      return;
     } else {
-      setYourBank((prev) => prev + yourBet * 2);
-      return setGameResult({
-        result: "playerWin",
+      setYourBank((prev) => {
+        if (prev === 0) {
+          return yourBet * 2;
+        } else {
+          return prev + yourBet * 2;
+        }
+      });
+      setGameResult({
         cpuTotal: cpu,
         playerTotal: player,
+        result: "playerWin",
+        setGameResult,
         setDealStart,
-        setYourBet,
         setCPUHand,
         setPlayerHand,
-        setGameResult,
-        setIsOpen,
+        setYourBet,
       });
+      return;
     }
   }
 
   function playerHit() {
-    if (cpuHand.reduce((acc, val) => acc + val.cardValue, 0) < 17) {
-      setCPUHand((prev) => [...prev, deck.pop()!]);
-    }
     setPlayerHand((prev) => [...prev, deck.pop()!]);
   }
 
   return (
     <MaxWidthWrapper className="relative">
-      {isOpen && gameResult && <ResultModal gameResult={gameResult} />}
+      {startDeal && gameResult && <ResultModal gameResult={gameResult} />}
 
       <div className="hidden md:block absolute top-10 right-10 w-max">
         <Badge>
@@ -308,8 +359,10 @@ function GameBoard() {
 
               <Button
                 onClick={() => {
-                  setDealStart(true);
-                  drawCard();
+                  setDealStart(() => {
+                    drawCard();
+                    return true;
+                  });
                 }}
                 size={"lg"}
                 variant={"secondary"}
@@ -397,14 +450,11 @@ function GameBoard() {
                       Math.round(Math.random()) === 1
                     ) {
                       setCPUHand((prev) => {
-                        calculateHandValue([...prev, deck.pop()!]);
-                        console.log([...prev, deck.pop()!]);
+                        playerStand([...prev, deck.pop()!]);
                         return [...prev, deck.pop()!];
                       });
-                      setIsOpen(true);
                     } else {
-                      setIsOpen(true);
-                      calculateHandValue(cpuHand);
+                      playerStand(cpuHand);
                     }
                   }}
                   size={"lg"}
