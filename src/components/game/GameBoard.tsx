@@ -86,7 +86,9 @@ function GameBoard() {
       return;
     }
     if (playerTotal > 21 && yourBank > 1) {
-      setDeck(shuffleDeck(CARDS));
+      if (yourBank === 0) {
+        setDeck(shuffleDeck(CARDS));
+      }
       setYourBank(Math.abs(yourBet + yourBank - yourBet));
       setGameResult({
         cpuTotal: cpuHand.reduce((acc, val) => acc + val.cardValue, 0),
@@ -193,7 +195,9 @@ function GameBoard() {
       return;
     }
     if (player > 21) {
-      setDeck(shuffleDeck(CARDS));
+      if (yourBank === 0) {
+        setDeck(shuffleDeck(CARDS));
+      }
       setGameResult({
         cpuTotal: cpu,
         playerTotal: player,
@@ -228,7 +232,9 @@ function GameBoard() {
     }
 
     if (cpu === 21) {
-      setDeck(shuffleDeck(CARDS));
+      if (yourBank === 0) {
+        setDeck(shuffleDeck(CARDS));
+      }
       setGameResult({
         cpuTotal: cpu,
         playerTotal: player,
@@ -247,7 +253,9 @@ function GameBoard() {
     const playerDiff = 21 - player;
 
     if (cpuDiff < playerDiff) {
-      setDeck(shuffleDeck(CARDS));
+      if (yourBank === 0) {
+        setDeck(shuffleDeck(CARDS));
+      }
       setYourBank(Math.abs(yourBet + yourBank - yourBet));
       setGameResult({
         cpuTotal: cpu,
@@ -428,11 +436,11 @@ function GameBoard() {
             </>
           )}
 
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-2 max-w-[18rem]">
             {startDeal && (
               <>
                 <Button
-                  disabled={playerTotal === 21}
+                  disabled={playerTotal === 21 || deck.length < 4}
                   onClick={() => playerHit()}
                   size={"lg"}
                   variant={playerTotal === 21 ? "destructive" : "default"}
@@ -467,6 +475,16 @@ function GameBoard() {
                   <Hand />
                   Stand
                 </Button>
+                {deck.length < 4 && (
+                  <Button
+                    onClick={() => setDeck(shuffleDeck(CARDS))}
+                    variant={"secondary"}
+                    className="w-max gap-2 uppercase animate-pulse"
+                  >
+                    <ShuffleIcon />
+                    Reshuffle deck
+                  </Button>
+                )}
               </>
             )}
             {!startDeal && deck.length > 4 && (
@@ -500,7 +518,7 @@ function GameBoard() {
                 onClick={() => setDeck(shuffleDeck(CARDS))}
                 size={"lg"}
                 variant={"secondary"}
-                className="w-max gap-2 animate-bounce"
+                className="w-max gap-2 animate-pulse uppercase"
               >
                 <ShuffleIcon />
                 Reshuffle deck
