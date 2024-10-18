@@ -11,6 +11,7 @@ import {
   HandshakeIcon,
   CircleXIcon,
   BookUpIcon,
+  ShuffleIcon,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { AnimatedNumber } from "../AnimatedNumber";
@@ -99,7 +100,7 @@ function GameBoard() {
       });
       return;
     }
-  }, [cpuHand, playerTotal, setYourBank, yourBank, yourBet]);
+  }, [cpuHand, playerTotal, yourBank, yourBet]);
 
   function drawCard() {
     const newDeck = [...deck];
@@ -155,6 +156,11 @@ function GameBoard() {
       return;
     }
     if (cpu === player) {
+      if (yourBank === 0) {
+        setYourBank(yourBet);
+      } else {
+        setYourBank(yourBank + yourBet);
+      }
       setGameResult({
         cpuTotal: cpu,
         playerTotal: player,
@@ -169,13 +175,11 @@ function GameBoard() {
       return;
     }
     if (cpu > 21) {
-      setYourBank((prev) => {
-        if (prev === 0) {
-          return yourBet * 2;
-        } else {
-          return prev + yourBet * 2;
-        }
-      });
+      if (yourBank === 0) {
+        setYourBank(yourBet * 2);
+      } else {
+        setYourBank(yourBank + yourBet * 2);
+      }
       setGameResult({
         cpuTotal: cpu,
         playerTotal: player,
@@ -205,13 +209,11 @@ function GameBoard() {
     }
 
     if (player === 21) {
-      setYourBank((prev) => {
-        if (prev === 0) {
-          return yourBet * 2;
-        } else {
-          return prev + yourBet * 2;
-        }
-      });
+      if (yourBank === 0) {
+        setYourBank(yourBet * 2);
+      } else {
+        setYourBank(yourBank + yourBet * 2);
+      }
       setGameResult({
         cpuTotal: cpu,
         playerTotal: player,
@@ -260,13 +262,11 @@ function GameBoard() {
       });
       return;
     } else {
-      setYourBank((prev) => {
-        if (prev === 0) {
-          return yourBet * 2;
-        } else {
-          return prev + yourBet * 2;
-        }
-      });
+      if (yourBank === 0) {
+        setYourBank(yourBet * 2);
+      } else {
+        setYourBank(yourBank + yourBet * 2);
+      }
       setGameResult({
         cpuTotal: cpu,
         playerTotal: player,
@@ -290,7 +290,7 @@ function GameBoard() {
       {startDeal && gameResult && <ResultModal gameResult={gameResult} />}
 
       <div className="hidden md:block absolute top-10 right-10 w-max">
-        <Badge>
+        <Badge variant={deck.length > 4 ? "default" : "destructive"}>
           remaining cards:
           <AnimatedNumber
             className="ml-1"
@@ -469,7 +469,7 @@ function GameBoard() {
                 </Button>
               </>
             )}
-            {!startDeal && (
+            {!startDeal && deck.length > 4 && (
               <>
                 <Button
                   disabled={!yourBank}
@@ -494,6 +494,17 @@ function GameBoard() {
                   <CircleXIcon /> Clear bet
                 </Button>
               </>
+            )}
+            {!startDeal && deck.length < 5 && (
+              <Button
+                onClick={() => setDeck(shuffleDeck(CARDS))}
+                size={"lg"}
+                variant={"secondary"}
+                className="w-max gap-2 animate-bounce"
+              >
+                <ShuffleIcon />
+                Reshuffle deck
+              </Button>
             )}
           </div>
         </motion.div>

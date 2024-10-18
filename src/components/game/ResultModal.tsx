@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Dispatch, SetStateAction } from "react";
+import { AlertOctagonIcon } from "lucide-react";
 
 export interface GameResult {
   result:
@@ -85,9 +86,11 @@ function ResultModal({ gameResult }: { gameResult: GameResult }) {
         if (gameResult.setYourBank) {
           gameResult.setYourBank(2000);
         }
+        gameResult.setPlayerHand([]);
+        gameResult.setCPUHand([]);
         gameResult.setGameResult(null);
-        gameResult.setYourBet(0);
         gameResult.setDealStart(false);
+        gameResult.setYourBet(0);
         return;
       case "playerBust":
         if (gameResult.setYourBank) {
@@ -107,11 +110,8 @@ function ResultModal({ gameResult }: { gameResult: GameResult }) {
         gameResult.setYourBet(0);
         return;
       case "push":
-        if (gameResult.setYourBank) {
-          gameResult.setYourBank(0);
-        }
         gameResult.setGameResult(null);
-        gameResult.setYourBet((prev) => prev);
+        gameResult.setYourBet(0);
         gameResult.setDealStart(false);
         return;
       default:
@@ -142,7 +142,30 @@ function ResultModal({ gameResult }: { gameResult: GameResult }) {
             </p>
           </div>
         </div>
-        <DialogFooter className="mt-6">
+        {gameResult.setYourBank != null && gameResult.result != "push" && (
+          <div className="bg-stone-50 rounded-lg border flex flex-col gap-2 items-center justify-center p-4">
+            <AlertOctagonIcon className="stroke-destructive" />
+
+            <p className="text-xs -tracking-tighter text-balance text-center font-bold">
+              Uh-oh! Your bank balance has hit zero. Would you like to restart
+              the game or exit?
+            </p>
+          </div>
+        )}
+        <DialogFooter className="gap-2 mt-6">
+          {gameResult.setYourBank != null && gameResult.result != "push" && (
+            <DialogClose className="w-full" asChild>
+              <Button
+                size={"lg"}
+                variant={"destructive"}
+                onClick={() => document.location.reload()}
+                className="w-full"
+              >
+                Exit
+              </Button>
+            </DialogClose>
+          )}
+
           <DialogClose className="w-full" asChild>
             <Button
               size={"lg"}
